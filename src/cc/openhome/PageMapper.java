@@ -17,24 +17,25 @@ import java.util.stream.Stream;
 public class PageMapper {
 
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles("c:\\workspace\\Java\\");
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\Java\\"));
         out.println(htmlFiles);
         out.println(htmlFiles.stream()
+                .map(Paths::get)
                 .map(PageMapper::fileContent)
                 .findFirst().get());
 
     }
 
-    private static List<String> htmlFiles(String dir) {
-        try (Stream<Path> paths = withIO(() -> Files.list(Paths.get(dir)))) {
+    private static List<String> htmlFiles(Path path) {
+        try (Stream<Path> paths = withIO(() -> Files.list(path))) {
             return paths.map(Path::toString)
-                    .filter(str -> str.endsWith(".html"))
-                    .collect(toList());
+                     .filter(str -> str.endsWith(".html"))
+                     .collect(toList());
         }
     }
 
-    private static String fileContent(String dir) {
-        return withIO(() -> Files.readAllLines(Paths.get(dir)).stream()
+    private static String fileContent(Path path) {
+        return withIO(() -> Files.readAllLines(path).stream()
                 .reduce((acc, line) -> acc + line + System.getProperty("line.separator"))
                 .get());
     }
