@@ -22,6 +22,9 @@ public class PageMapper {
         patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
         patterns.put("stripTags", Pattern.compile("\\<[^>]*>"));
         patterns.put("img", Pattern.compile("<img (.+?)>"));
+        patterns.put("table", Pattern.compile("<table class=\"cmd\">((.*\\s*)*?)</table>"));
+        patterns.put("tr", Pattern.compile("<table class=\"cmd\">\\s*<tbody>\\s*<tr>((.*\\s*)*?)</tr>\\s*</tbody>\\s*</table>"));
+        patterns.put("td", Pattern.compile("<td>((.*\\s*)*?)</td>"));
     }    
     
     private static String rwdImg =
@@ -32,17 +35,22 @@ public class PageMapper {
                 + "</div>";
             
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
-        htmlFiles.stream()
-                .map(Paths::get)
-                // 排除首頁，因為比較複雜，要手動修改
-                .filter(path -> !path.getFileName().toString().equals("index.html"))
-                .map(IO::pathContent)
-                // 處理 div class="article" 與 title
-                .map(PageMapper::map2Template)
-                .map(PageMapper::img2RWD)
-                .forEach(IO::write);
-
+//        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
+//        htmlFiles.stream()
+//                .map(Paths::get)
+//                // 排除首頁，因為比較複雜，要手動修改
+//                .filter(path -> !path.getFileName().toString().equals("index.html"))
+//                .map(IO::pathContent)
+//                // 處理 div class="article" 與 title
+//                .map(PageMapper::map2Template)
+//                .map(PageMapper::img2RWD)
+//                .forEach(IO::write);
+        
+        
+        String content = pathContent(Paths.get("c:\\workspace\\NewJava\\TableTest.html")).content;
+        out.println(cmdTable2Div(new PathContent(null, content)).content);
+        
+        
     }
     
     private static String tagContent(String content, String tag) {
@@ -64,6 +72,15 @@ public class PageMapper {
     
     private static PathContent img2RWD(PathContent pathContent) {
         pathContent.content = patterns.get("img").matcher(pathContent.content).replaceAll(rwdImg);
+        return pathContent;
+    }
+    
+    private static PathContent cmdTable2Div(PathContent pathContent) {
+        String cmdContent = pathContent.content;
+        cmdContent = tagContent(cmdContent, "tr");
+        cmdContent = tagContent(cmdContent, "td").trim();
+        pathContent.content = patterns.get("table").matcher(pathContent.content)
+              .replaceAll(Matcher.quoteReplacement("<div class=\"cmd\">" + cmdContent + "</div>"));
         return pathContent;
     }
 }
