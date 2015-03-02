@@ -21,20 +21,28 @@ public class PageMapper {
         patterns.put("title", Pattern.compile("<title>(.*)</title>"));
         patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
         patterns.put("stripTags", Pattern.compile("\\<[^>]*>"));
+        patterns.put("img", Pattern.compile("<img (.+?)>"));
     }    
+    
+    private static String rwdImg =
+                  "<div class=\"pure-g\">" 
+                +     "<div class=\"pure-u-1\">" 
+                +         "<img class=\"pure-img-responsive\" $1 />"
+                +     "</div>"
+                + "</div>";
             
     public static void main(String[] args) {
-//        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
-//        htmlFiles.stream()
-//                .map(Paths::get)
-//                // 排除首頁，因為比較複雜，要手動修改
-//                .filter(path -> !path.getFileName().toString().equals("index.html"))
-//                .map(IO::pathContent)
-//                // 處理 div class="article" 與 title
-//                .map(PageMapper::map2Template)
-//                .forEach(IO::write);
-          String content = tagContent(pathContent(Paths.get("c:\\workspace\\Java\\Abstract.html")).content, "div class=\"article\"");
-          out.println(patterns.get("stripTags").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
+        htmlFiles.stream()
+                .map(Paths::get)
+                // 排除首頁，因為比較複雜，要手動修改
+                .filter(path -> !path.getFileName().toString().equals("index.html"))
+                .map(IO::pathContent)
+                // 處理 div class="article" 與 title
+                .map(PageMapper::map2Template)
+                .map(PageMapper::img2RWD)
+                .forEach(IO::write);
+
     }
     
     private static String tagContent(String content, String tag) {
@@ -42,10 +50,9 @@ public class PageMapper {
         matcher.find();
         return matcher.group(1);
     }
-     
+    
     private static PathContent map2Template(PathContent pathContent) {
         String content = tagContent(pathContent.content, "div class=\"article\"");
-        
          pathContent.content = 
              template.content
                    .replace("#content#", content)
@@ -53,5 +60,10 @@ public class PageMapper {
                    .replaceAll("#fileName#", pathContent.path.getFileName().toString())
                    .replaceAll("#description#", patterns.get("stripTags").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
          return pathContent;
+    }
+    
+    private static PathContent img2RWD(PathContent pathContent) {
+        pathContent.content = patterns.get("img").matcher(pathContent.content).replaceAll(rwdImg);
+        return pathContent;
     }
 }
