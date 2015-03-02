@@ -44,11 +44,8 @@ public class PageMapper {
                 // 處理 div class="article" 與 title
                 .map(PageMapper::map2Template)
                 .map(PageMapper::img2RWD)
+                .map(PageMapper::cmdTable2Div)
                 .forEach(IO::write);
-        
-        
-//        String content = pathContent(Paths.get("c:\\workspace\\NewJava\\TableTest.html")).content;
-//        out.println(cmdTable2Div(new PathContent(null, content)).content);
         
         
     }
@@ -63,7 +60,7 @@ public class PageMapper {
         String content = tagContent(pathContent.content, "div class=\"article\"");
          pathContent.content = 
              template.content
-                   .replaceAll("#content#", Matcher.quoteReplacement(content))
+                   .replace("#content#", Matcher.quoteReplacement(content))
                    .replaceAll("#title#", tagContent(pathContent.content, "title"))
                    .replaceAll("#fileName#", pathContent.path.getFileName().toString())
                    .replaceAll("#description#", patterns.get("stripTags").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
@@ -77,10 +74,13 @@ public class PageMapper {
     
     private static PathContent cmdTable2Div(PathContent pathContent) {
         String cmdContent = pathContent.content;
-        cmdContent = tagContent(cmdContent, "tr");
-        cmdContent = tagContent(cmdContent, "td").trim();
-        pathContent.content = patterns.get("table").matcher(pathContent.content)
-              .replaceAll(Matcher.quoteReplacement("<div class=\"cmd\">" + cmdContent + "</div>"));
+        Matcher matcher = patterns.get("tr").matcher(cmdContent);
+        if(matcher.find()) {
+            cmdContent = matcher.group(1);
+            cmdContent = tagContent(cmdContent, "td").trim();
+            pathContent.content = patterns.get("table").matcher(pathContent.content)
+                  .replaceAll(Matcher.quoteReplacement("<div class=\"cmd\">" + cmdContent + "</div>"));
+        }
         return pathContent;
     }
 }
