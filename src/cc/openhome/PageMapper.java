@@ -43,7 +43,8 @@ public class PageMapper {
          pathContent.content = 
              template.content
                    .replace("#content#", tagContent(pathContent.content, "div class=\"article\""))
-                   .replaceAll("#title#", tagContent(pathContent.content, "title"));
+                   .replaceAll("#title#", tagContent(pathContent.content, "title"))
+                   .replaceAll("#fileName#", pathContent.path.getFileName().toString());
          return pathContent;
     }
 }
