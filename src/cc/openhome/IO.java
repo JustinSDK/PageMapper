@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.util.List;
 import static java.util.stream.Collectors.toList;
 import java.util.stream.Stream;
@@ -36,5 +38,9 @@ public class IO {
     public static PathContent pathContent(Path path) {
         String content = withIO(() -> Files.readAllLines(path).stream().reduce((String acc, String line) -> acc + line + System.getProperty("line.separator")).get());
         return new PathContent(path, content);
+    }
+    
+    public static void write(PathContent pathContent) {
+        withIO(() -> Files.write(pathContent.path, pathContent.content.getBytes("UTF-8"), TRUNCATE_EXISTING, CREATE));
     }
 }

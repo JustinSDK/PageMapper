@@ -1,11 +1,7 @@
 package cc.openhome;
 
 import static cc.openhome.IO.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,9 +30,7 @@ public class PageMapper {
                 .map(IO::pathContent)
                 // 處理 div class="article" 與 title
                 .map(PageMapper::map)
-                .forEach(pathContent -> {
-                     //withIO(() -> Files.write(pathContent.path, pathContent.content.getBytes("UTF-8"), TRUNCATE_EXISTING, CREATE));
-                });
+                .forEach(IO::write);
     }
     
     private static String tagContent(String content, String tag) {
