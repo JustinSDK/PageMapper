@@ -21,7 +21,7 @@ import java.util.stream.Stream;
  */
 public class IO {
 
-    public static List htmlFiles(Path path) {
+    public static List<String> htmlFiles(Path path) {
         try (final Stream<Path> paths = withIO(() -> Files.list(path))) {
             return paths.map(Path::toString).filter((String str) -> str.endsWith(".html")).collect(toList());
         }

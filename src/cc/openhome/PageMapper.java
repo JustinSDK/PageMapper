@@ -22,19 +22,20 @@ public class PageMapper {
     }    
             
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
-        htmlFiles.stream()
-                .map(Paths::get)
-                // 排除首頁，因為比較複雜，要手動修改
-                .filter(path -> !path.getFileName().toString().equals("index.html"))
-                .map(IO::pathContent)
-                // 處理 div class="article" 與 title
-                .map(PageMapper::map2Template)
-                .forEach(IO::write);
+//        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
+//        htmlFiles.stream()
+//                .map(Paths::get)
+//                // 排除首頁，因為比較複雜，要手動修改
+//                .filter(path -> !path.getFileName().toString().equals("index.html"))
+//                .map(IO::pathContent)
+//                // 處理 div class="article" 與 title
+//                .map(PageMapper::map2Template)
+//                .forEach(IO::write);
+        
     }
     
     private static String tagContent(String content, String tag) {
-        Matcher matcher =  patterns.get(tag).matcher(content);
+        Matcher matcher = patterns.get(tag).matcher(content);
         matcher.find();
         return matcher.group(1);
     }
