@@ -1,6 +1,7 @@
 package cc.openhome;
 
 import static cc.openhome.IO.*;
+import static java.lang.System.out;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
@@ -22,16 +23,17 @@ public class PageMapper {
     }    
             
     public static void main(String[] args) {
-//        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
-//        htmlFiles.stream()
-//                .map(Paths::get)
-//                // 排除首頁，因為比較複雜，要手動修改
-//                .filter(path -> !path.getFileName().toString().equals("index.html"))
-//                .map(IO::pathContent)
-//                // 處理 div class="article" 與 title
-//                .map(PageMapper::map2Template)
-//                .forEach(IO::write);
-        
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
+        htmlFiles.stream()
+                .map(Paths::get)
+                // 排除首頁，因為比較複雜，要手動修改
+                .filter(path -> !path.getFileName().toString().equals("index.html"))
+                .map(IO::pathContent)
+                // 處理 div class="article" 與 title
+                .map(PageMapper::map2Template)
+                .forEach(IO::write);
+//        String content = pathContent(Paths.get("c:\\workspace\\Java\\Abstract.html")).content;
+//        out.println(tagContent(content, "div class=\"article\"").replaceAll("\\<[^>]*>", "").trim().substring(0, 140) + ".."); 
     }
     
     private static String tagContent(String content, String tag) {
@@ -41,11 +43,13 @@ public class PageMapper {
     }
      
     private static PathContent map2Template(PathContent pathContent) {
+        String content = tagContent(pathContent.content, "div class=\"article\"");
          pathContent.content = 
              template.content
-                   .replace("#content#", tagContent(pathContent.content, "div class=\"article\""))
+                   .replace("#content#", content)
                    .replaceAll("#title#", tagContent(pathContent.content, "title"))
-                   .replaceAll("#fileName#", pathContent.path.getFileName().toString());
+                   .replaceAll("#fileName#", pathContent.path.getFileName().toString())
+                   .replaceAll("#description#", content.replaceAll("\\<[^>]*>", "").trim().substring(0, 140) + "...");
          return pathContent;
     }
 }
