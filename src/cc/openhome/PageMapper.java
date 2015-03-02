@@ -19,7 +19,7 @@ import java.util.stream.Stream;
  * @author Justin
  */
 public class PageMapper {
-    private static String template = fileContent(Paths.get("c:\\workspace\\template.html"));
+    private static PathContent template = pathContent(Paths.get("c:\\workspace\\template.html"));
     
     private static Map<String, Pattern> patterns = new HashMap<>();
     static {
@@ -29,15 +29,15 @@ public class PageMapper {
             
     public static void main(String[] args) {
         List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\Java\\"));
-        String content = htmlFiles.stream()
+        String newContent = htmlFiles.stream()
                 .map(Paths::get)
-                .map(PageMapper::fileContent)
-                .findFirst().get();
+                .map(PageMapper::pathContent)
+                // 處理 body 與 title
+                .map(PageMapper::map)
+                .findFirst()
+                .get().content;
         
-        out.println(tagContent(content, "title"));
-        out.println(tagContent(content, "body"));
-        
-
+        out.println(newContent);
     }
 
     private static List<String> htmlFiles(Path path) {
@@ -48,10 +48,11 @@ public class PageMapper {
         }
     }
 
-    private static String fileContent(Path path) {
-        return withIO(() -> Files.readAllLines(path).stream()
+    private static PathContent pathContent(Path path) {
+        String content = withIO(() -> Files.readAllLines(path).stream()
                 .reduce((acc, line) -> acc + line + System.getProperty("line.separator"))
                 .get());
+        return new PathContent(path, content);
     }
 
     private static <R> R withIO(UncheckedIO<R> io) {
@@ -67,5 +68,12 @@ public class PageMapper {
         matcher.find();
         return matcher.group(1);
     }
-   
+     
+    private static PathContent map(PathContent pathContent) {
+         pathContent.content = 
+             template.content
+                   .replaceAll("#content#", tagContent(pathContent.content, "body"))
+                   .replaceAll("#title#", tagContent(pathContent.content, "title"));
+         return pathContent;
+    }
 }
