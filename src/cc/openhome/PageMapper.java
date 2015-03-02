@@ -29,7 +29,7 @@ public class PageMapper {
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
                 // 處理 div class="article" 與 title
-                .map(PageMapper::map)
+                .map(PageMapper::map2Template)
                 .forEach(IO::write);
     }
     
@@ -39,7 +39,7 @@ public class PageMapper {
         return matcher.group(1);
     }
      
-    private static PathContent map(PathContent pathContent) {
+    private static PathContent map2Template(PathContent pathContent) {
          pathContent.content = 
              template.content
                    .replace("#content#", tagContent(pathContent.content, "div class=\"article\""))
