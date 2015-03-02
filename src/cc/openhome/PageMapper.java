@@ -6,6 +6,8 @@ import static java.lang.System.out;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,20 +26,22 @@ public class PageMapper {
     private static Map<String, Pattern> patterns = new HashMap<>();
     static {
         patterns.put("title", Pattern.compile("<title>(.*)</title>"));
-        patterns.put("body", Pattern.compile("<body>((.*\\s*)*)</body>"));
+        patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
     }    
             
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\Java\\"));
-        String newContent = htmlFiles.stream()
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
+        htmlFiles.stream()
                 .map(Paths::get)
+                // 排除首頁，因為比較複雜，要手動修改
+                .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(PageMapper::pathContent)
-                // 處理 body 與 title
+                // 處理 div class="article" 與 title
                 .map(PageMapper::map)
-                .findFirst()
-                .get().content;
+                .forEach(pathContent -> {
+                    //withIO(() -> Files.write(pathContent.path, pathContent.content.getBytes("UTF-8"), TRUNCATE_EXISTING, CREATE));
+                });
         
-        out.println(newContent);
     }
 
     private static List<String> htmlFiles(Path path) {
@@ -72,7 +76,7 @@ public class PageMapper {
     private static PathContent map(PathContent pathContent) {
          pathContent.content = 
              template.content
-                   .replaceAll("#content#", tagContent(pathContent.content, "body"))
+                   .replace("#content#", tagContent(pathContent.content, "div class=\"article\""))
                    .replaceAll("#title#", tagContent(pathContent.content, "title"));
          return pathContent;
     }
