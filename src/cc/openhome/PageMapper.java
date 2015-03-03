@@ -81,4 +81,11 @@ public class PageMapper {
         pathContent.content = patterns.get("span class=\"courier\"").matcher(pathContent.content).replaceAll("<code>$1</code>");
         return pathContent;
     }
+    
+    public static PathContent pre2PrettyPrint(PathContent pathContent, String lang) {
+         pathContent.content = pathContent.content
+                 .replaceAll("<pre>", "<pre class=\"prettyprint\"><code lang=\""+ lang + "\">")
+                 .replaceAll("</pre>", "</code></pre>");
+        return pathContent;
+    }
 }
