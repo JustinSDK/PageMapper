@@ -23,6 +23,7 @@ public class PageMapper {
         patterns.put("all", Pattern.compile("\\<[^>]*>"));
         patterns.put("img", Pattern.compile("<img (.+?)>", Pattern.DOTALL));
         patterns.put("table", Pattern.compile("<table class=\"cmd\">.+?<tr>.+?<td>(.+?)</td>.+?</tr>.+?</table>", Pattern.DOTALL));
+        patterns.put("span class=\"courier\"", Pattern.compile("<span.*?class=\"courier\">(.*?)</span>", Pattern.DOTALL));
     }    
     
     private static String rwdImg =
@@ -43,7 +44,7 @@ public class PageMapper {
                 .map(PageMapper::img2RWD)
                 .map(PageMapper::cmdTable2Div)
                 .forEach(IO::write);
-        
+    
         
     }
     
@@ -53,8 +54,9 @@ public class PageMapper {
         return matcher.group(1);
     }
     
-    public static PathContent map2Template(PathContent pathContent) {
+    public static PathContent map2Template(PathContent pathContent) {      
         String content = tagContent(pathContent.content, "div class=\"article\"");
+        
          pathContent.content = 
              template.content
                    .replace("#content#", Matcher.quoteReplacement(content))
@@ -71,6 +73,12 @@ public class PageMapper {
     
     public static PathContent cmdTable2Div(PathContent pathContent) {
         pathContent.content = patterns.get("table").matcher(pathContent.content).replaceAll("<div class=\"cmd\">$1</div>");
+        return pathContent;
+    }
+    
+    
+    public static PathContent spanCourier2Code(PathContent pathContent) {
+        pathContent.content = patterns.get("span class=\"courier\"").matcher(pathContent.content).replaceAll("<code>$1</code>");
         return pathContent;
     }
 }
