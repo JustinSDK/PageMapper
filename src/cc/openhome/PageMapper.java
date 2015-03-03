@@ -33,7 +33,7 @@ public class PageMapper {
                 + "</div>";
             
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\NewJava\\"));
+        List<String> htmlFiles = htmlFiles(Paths.get(args[0]));
         htmlFiles.stream()
                 .map(Paths::get)
                 // 排除首頁，因為比較複雜，要手動修改
@@ -53,7 +53,7 @@ public class PageMapper {
         return matcher.group(1);
     }
     
-    private static PathContent map2Template(PathContent pathContent) {
+    public static PathContent map2Template(PathContent pathContent) {
         String content = tagContent(pathContent.content, "div class=\"article\"");
          pathContent.content = 
              template.content
@@ -64,12 +64,12 @@ public class PageMapper {
          return pathContent;
     }
     
-    private static PathContent img2RWD(PathContent pathContent) {
+    public static PathContent img2RWD(PathContent pathContent) {
         pathContent.content = patterns.get("img").matcher(pathContent.content).replaceAll(rwdImg);
         return pathContent;
     }
     
-    private static PathContent cmdTable2Div(PathContent pathContent) {
+    public static PathContent cmdTable2Div(PathContent pathContent) {
         pathContent.content = patterns.get("table").matcher(pathContent.content).replaceAll("<div class=\"cmd\">$1</div>");
         return pathContent;
     }
