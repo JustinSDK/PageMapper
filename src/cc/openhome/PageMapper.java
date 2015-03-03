@@ -20,7 +20,7 @@ public class PageMapper {
     static {
         patterns.put("title", Pattern.compile("<title>(.+?)</title>", Pattern.DOTALL));
         patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
-        patterns.put("stripTags", Pattern.compile("\\<[^>]*>"));
+        patterns.put("all", Pattern.compile("\\<[^>]*>"));
         patterns.put("img", Pattern.compile("<img (.+?)>", Pattern.DOTALL));
         patterns.put("table", Pattern.compile("<table class=\"cmd\">.+?<tr>.+?<td>(.+?)</td>.+?</tr>.+?</table>", Pattern.DOTALL));
     }    
@@ -60,7 +60,7 @@ public class PageMapper {
                    .replace("#content#", Matcher.quoteReplacement(content))
                    .replaceAll("#title#", tagContent(pathContent.content, "title"))
                    .replaceAll("#fileName#", pathContent.path.getFileName().toString())
-                   .replaceAll("#description#", patterns.get("stripTags").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
+                   .replaceAll("#description#", patterns.get("all").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
          return pathContent;
     }
     
