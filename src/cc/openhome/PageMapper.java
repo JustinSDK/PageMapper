@@ -18,13 +18,11 @@ public class PageMapper {
     
     private static Map<String, Pattern> patterns = new HashMap<>();
     static {
-        patterns.put("title", Pattern.compile("<title>(.*)</title>"));
+        patterns.put("title", Pattern.compile("<title>(.+?)</title>", Pattern.DOTALL));
         patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
         patterns.put("stripTags", Pattern.compile("\\<[^>]*>"));
-        patterns.put("img", Pattern.compile("<img (.+?)>"));
-        patterns.put("table", Pattern.compile("<table class=\"cmd\">((.*\\s*)*?)</table>"));
-        patterns.put("tr", Pattern.compile("<table class=\"cmd\">\\s*<tbody>\\s*<tr>((.*\\s*)*?)</tr>\\s*</tbody>\\s*</table>"));
-        patterns.put("td", Pattern.compile("<td>((.*\\s*)*?)</td>"));
+        patterns.put("img", Pattern.compile("<img (.+?)>", Pattern.DOTALL));
+        patterns.put("table", Pattern.compile("<table class=\"cmd\">.+?<tr>.+?<td>(.+?)</td>.+?</tr>.+?</table>", Pattern.DOTALL));
     }    
     
     private static String rwdImg =
@@ -41,7 +39,6 @@ public class PageMapper {
                 // 排除首頁，因為比較複雜，要手動修改
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
-                // 處理 div class="article" 與 title
                 .map(PageMapper::map2Template)
                 .map(PageMapper::img2RWD)
                 .map(PageMapper::cmdTable2Div)
@@ -73,14 +70,7 @@ public class PageMapper {
     }
     
     private static PathContent cmdTable2Div(PathContent pathContent) {
-        String cmdContent = pathContent.content;
-        Matcher matcher = patterns.get("tr").matcher(cmdContent);
-        if(matcher.find()) {
-            cmdContent = matcher.group(1);
-            cmdContent = tagContent(cmdContent, "td").trim();
-            pathContent.content = patterns.get("table").matcher(pathContent.content)
-                  .replaceAll(Matcher.quoteReplacement("<div class=\"cmd\">" + cmdContent + "</div>"));
-        }
+        pathContent.content = patterns.get("table").matcher(pathContent.content).replaceAll("<div class=\"cmd\">$1</div>");
         return pathContent;
     }
 }
