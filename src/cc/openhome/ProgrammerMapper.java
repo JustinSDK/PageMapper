@@ -18,7 +18,8 @@ public class ProgrammerMapper {
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
                 .map(PageMapper::map2Template)
-                .map(PageMapper::spanCourier2Code)
+                // 不處理 span class 了，直接套 CSS 比較簡單
+                //.map(PageMapper::spanCourier2Code)
                 .forEach(IO::write);
     }
 }
