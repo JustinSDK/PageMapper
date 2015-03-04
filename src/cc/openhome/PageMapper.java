@@ -24,6 +24,7 @@ public class PageMapper {
         patterns.put("img", Pattern.compile("<img (.+?)>", Pattern.DOTALL));
         patterns.put("table", Pattern.compile("<table class=\"cmd\">.+?<tr>.+?<td>(.+?)</td>.+?</tr>.+?</table>", Pattern.DOTALL));
         patterns.put("span class=\"courier\"", Pattern.compile("<span.*?class=\"courier\">(.*?)</span>", Pattern.DOTALL));
+        patterns.put("div class=\"aside\"", Pattern.compile("<div class=\"aside\">((.*\\s*)*?)</div>"));
     }    
     
     private static String rwdImg =
@@ -54,7 +55,7 @@ public class PageMapper {
         return matcher.group(1);
     }
     
-    public static PathContent map2Template(PathContent pathContent) {      
+    public static PathContent map2Template(PathContent pathContent) {
         String content = tagContent(pathContent.content, "div class=\"article\"");
         
          pathContent.content = 
@@ -86,6 +87,11 @@ public class PageMapper {
          pathContent.content = pathContent.content
                  .replaceAll("<pre>", "<pre class=\"prettyprint\"><code lang=\""+ lang + "\">")
                  .replaceAll("</pre>", "</code></pre>");
+        return pathContent;
+    }
+    
+    public static PathContent removeDivAside(PathContent pathContent) {
+        pathContent.content = patterns.get("div class=\"aside\"").matcher(pathContent.content).replaceAll("");
         return pathContent;
     }
 }

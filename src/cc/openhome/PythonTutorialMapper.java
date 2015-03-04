@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package cc.openhome;
 
 import static cc.openhome.IO.htmlFiles;
@@ -15,7 +14,8 @@ import java.util.List;
  * @author Justin
  */
 public class PythonTutorialMapper {
-        public static void main(String[] args) {
+
+    public static void main(String[] args) {
         List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\CodeData\\PythonTutorial\\"));
         htmlFiles.stream()
                 .map(Paths::get)
@@ -23,6 +23,7 @@ public class PythonTutorialMapper {
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
                 .map(PageMapper::map2Template)
+                .map(PageMapper::removeDivAside)
                 .map(PageMapper::img2RWD)
                 .map(pathContent -> PageMapper.pre2PrettyPrint(pathContent, "python"))
                 .forEach(IO::write);
