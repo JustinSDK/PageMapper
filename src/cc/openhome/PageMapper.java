@@ -25,6 +25,8 @@ public class PageMapper {
         patterns.put("table", Pattern.compile("<table class=\"cmd\">.+?<tr>.+?<td>(.+?)</td>.+?</tr>.+?</table>", Pattern.DOTALL));
         patterns.put("span class=\"courier\"", Pattern.compile("<span.*?class=\"courier\">(.*?)</span>", Pattern.DOTALL));
         patterns.put("div class=\"aside\"", Pattern.compile("<div class=\"aside\">((.*\\s*)*?)</div>"));
+        patterns.put("前情", Pattern.compile("<a href.*?>.*?前情</a>"));
+        patterns.put("後續", Pattern.compile("<a href.*?>後續.*?</a>"));
     }    
     
     private static String rwdImg =
@@ -92,6 +94,12 @@ public class PageMapper {
     
     public static PathContent removeDivAside(PathContent pathContent) {
         pathContent.content = patterns.get("div class=\"aside\"").matcher(pathContent.content).replaceAll("");
+        return pathContent;
+    }
+    
+    public static PathContent removePreNextLink(PathContent pathContent) {
+        pathContent.content = patterns.get("前情").matcher(pathContent.content).replaceAll("");
+        pathContent.content = patterns.get("後續").matcher(pathContent.content).replaceAll("");
         return pathContent;
     }
 }
