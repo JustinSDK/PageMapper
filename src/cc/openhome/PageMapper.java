@@ -83,19 +83,15 @@ public class PageMapper {
     }
     
     public static PathContent img2RWD(PathContent pathContent) {
-        pathContent.content = patterns.get("img").matcher(pathContent.content).replaceAll(rwdImg);
-        return pathContent;
+        return replace(pathContent, "img", rwdImg);
     }
     
     public static PathContent cmdTable2Div(PathContent pathContent) {
-        pathContent.content = patterns.get("table").matcher(pathContent.content).replaceAll("<div class=\"cmd\">$1</div>");
-        return pathContent;
+        return replace(pathContent, "table", "<div class=\"cmd\">$1</div>");
     }
     
-    
     public static PathContent spanCourier2Code(PathContent pathContent) {
-        pathContent.content = patterns.get("span class=\"courier\"").matcher(pathContent.content).replaceAll("<code>$1</code>");
-        return pathContent;
+        return replace(pathContent, "span class=\"courier\"", "<code>$1</code>");
     }
     
     public static PathContent pre2PrettyPrint(PathContent pathContent, String lang) {
@@ -106,13 +102,15 @@ public class PageMapper {
     }
     
     public static PathContent removeDivAside(PathContent pathContent) {
-        pathContent.content = patterns.get("div class=\"aside\"").matcher(pathContent.content).replaceAll("");
-        return pathContent;
+        return replace(pathContent, "div class=\"aside\"", "");
     }
     
     public static PathContent removePreNextLink(PathContent pathContent) {
-        pathContent.content = patterns.get("前情").matcher(pathContent.content).replaceAll("");
-        pathContent.content = patterns.get("後續").matcher(pathContent.content).replaceAll("");
+        return replace(replace(pathContent, "前情", ""), "後續", "");
+    }
+    
+    public static PathContent replace(PathContent pathContent, String name, String replacement) {
+        pathContent.content = patterns.get(name).matcher(pathContent.content).replaceAll(replacement);
         return pathContent;
     }
 }
