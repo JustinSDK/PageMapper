@@ -27,6 +27,7 @@ public class PageMapper {
         patterns.put("div class=\"aside\"", Pattern.compile("<div class=\"aside\">((.*\\s*)*?)</div>"));
         patterns.put("前情", Pattern.compile("<a href.*?>.*?前情</a>"));
         patterns.put("後續", Pattern.compile("<a href.*?>後續.*?</a>"));
+        patterns.put("td", Pattern.compile("<td style=\"vertical-align: top; width: 690px; text-align: left;\">(.*?)</td>", Pattern.DOTALL));
     }    
     
     private static String rwdImg =
@@ -47,8 +48,6 @@ public class PageMapper {
                 .map(PageMapper::img2RWD)
                 .map(PageMapper::cmdTable2Div)
                 .forEach(IO::write);
-    
-        
     }
     
     private static String tagContent(String content, String tag) {
@@ -72,6 +71,15 @@ public class PageMapper {
                    .replaceAll("#title#", title)
                    .replaceAll("#fileName#", fileName)
                    .replaceAll("#description#", patterns.get("all").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
+    }
+    
+    public static PathContent titleTdArticle2Template(PathContent pathContent) {
+        String content = tagContent(pathContent.content, "td");
+        pathContent.content = fromTemplate(
+                    pathContent.path.getFileName().toString(), 
+                    tagContent(pathContent.content, "title"), 
+                    content);
+         return pathContent;
     }
     
     public static PathContent img2RWD(PathContent pathContent) {

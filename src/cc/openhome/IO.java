@@ -7,6 +7,7 @@ package cc.openhome;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import static java.nio.file.StandardOpenOption.CREATE;
@@ -37,6 +38,11 @@ public class IO {
 
     public static PathContent pathContent(Path path) {
         String content = withIO(() -> Files.readAllLines(path).stream().reduce((String acc, String line) -> acc + line + System.getProperty("line.separator")).get());
+        return new PathContent(path, content);
+    }
+    
+    public static PathContent pathContent(Path path, Charset charSet) {
+        String content = withIO(() -> Files.readAllLines(path, charSet).stream().reduce((String acc, String line) -> acc + line + System.getProperty("line.separator")).get());
         return new PathContent(path, content);
     }
     
