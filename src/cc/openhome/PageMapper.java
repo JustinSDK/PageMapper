@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 public class PageMapper {
     private static PathContent template = pathContent(Paths.get("c:\\workspace\\template.html"));
     
-    private static Map<String, Pattern> patterns = new HashMap<>();
+    public static Map<String, Pattern> patterns = new HashMap<>();
     static {
         patterns.put("title", Pattern.compile("<title>(.+?)</title>", Pattern.DOTALL));
         patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
@@ -27,7 +27,8 @@ public class PageMapper {
         patterns.put("div class=\"aside\"", Pattern.compile("<div class=\"aside\">((.*\\s*)*?)</div>"));
         patterns.put("前情", Pattern.compile("<a href.*?>.*?前情</a>"));
         patterns.put("後續", Pattern.compile("<a href.*?>後續.*?</a>"));
-        patterns.put("td", Pattern.compile("<td style=\"vertical-align: top; width: 690px; text-align: left;\">(.*?)</td>", Pattern.DOTALL));
+        patterns.put("tdStudyGossip", Pattern.compile("<td style=\"vertical-align: top; width: 690px; text-align: left;\">(.*?)</td>", Pattern.DOTALL));
+        patterns.put("tdAlgorithmGossip", Pattern.compile("<td style=\"width: \\d*px; vertical-align: top;\">(.*?)</td>", Pattern.DOTALL));
     }    
     
     private static String rwdImg =
@@ -73,12 +74,13 @@ public class PageMapper {
                    .replaceAll("#description#", patterns.get("all").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
     }
     
-    public static PathContent titleTdArticle2Template(PathContent pathContent) {
-        String content = tagContent(pathContent.content, "td");
+    public static PathContent titleTdArticle2Template(PathContent pathContent, String td) {
+        String content = tagContent(pathContent.content, td);
         pathContent.content = fromTemplate(
                     pathContent.path.getFileName().toString(), 
                     tagContent(pathContent.content, "title"), 
                     content);
+        
          return pathContent;
     }
     
@@ -97,6 +99,13 @@ public class PageMapper {
     public static PathContent pre2PrettyPrint(PathContent pathContent, String lang) {
          pathContent.content = pathContent.content
                  .replaceAll("<pre>", "<pre class=\"prettyprint\"><code lang=\""+ lang + "\">")
+                 .replaceAll("</pre>", "</code></pre>");
+        return pathContent;
+    }
+    
+    public static PathContent pre2PrettyPrint(PathContent pathContent) {
+         pathContent.content = pathContent.content
+                 .replaceAll("<pre>", "<pre class=\"prettyprint\"><code>")
                  .replaceAll("</pre>", "</code></pre>");
         return pathContent;
     }

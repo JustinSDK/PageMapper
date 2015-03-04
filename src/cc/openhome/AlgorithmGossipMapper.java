@@ -14,15 +14,17 @@ import java.util.List;
  *
  * @author Justin
  */
-public class StudyGossipMapper {
+public class AlgorithmGossipMapper {
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\StudyGossip\\"));
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\AlgorithmGossip\\"));
         htmlFiles.stream()
                 .map(Paths::get)
                 // 排除首頁，因為比較複雜，要手動修改
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(path -> IO.pathContent(path, Charset.forName("Big5")))
-                .map(pathContent -> PageMapper.titleTdArticle2Template(pathContent, "tdStudyGossip"))
+                .map(pathContent -> PageMapper.titleTdArticle2Template(pathContent, "tdAlgorithmGossip"))
+                .map(PageMapper::img2RWD)
+                .map(PageMapper::pre2PrettyPrint)
                 .forEach(IO::write);
     }
 }
