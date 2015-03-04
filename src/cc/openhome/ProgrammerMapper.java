@@ -17,7 +17,7 @@ public class ProgrammerMapper {
                 // 排除首頁，因為比較複雜，要手動修改
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
-                .map(PageMapper::map2Template)
+                .map(PageMapper::titleDivArticle2Template)
                 // 不處理 span class 了，直接套 CSS 比較簡單
                 //.map(PageMapper::spanCourier2Code)
                 .forEach(IO::write);

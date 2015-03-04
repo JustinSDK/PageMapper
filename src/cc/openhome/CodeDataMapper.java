@@ -16,17 +16,17 @@ import java.util.List;
 public class CodeDataMapper {
 
     public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\CodeData\\JavaTutorial\\"));
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\CodeData\\EssentialJavaScript\\"));
         htmlFiles.stream()
                 .map(Paths::get)
                 // 排除首頁，因為比較複雜，要手動修改
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
-                .map(PageMapper::map2Template)
+                .map(PageMapper::titleDivArticle2Template)
                 .map(PageMapper::removeDivAside)
                 .map(PageMapper::removePreNextLink)
                 .map(PageMapper::img2RWD)
-                .map(pathContent -> PageMapper.pre2PrettyPrint(pathContent, "java"))
+                .map(pathContent -> PageMapper.pre2PrettyPrint(pathContent, "javascript"))
                 .forEach(IO::write);
     }
 }

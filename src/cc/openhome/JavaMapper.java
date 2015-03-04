@@ -12,7 +12,7 @@ public class JavaMapper {
                 // 排除首頁，因為比較複雜，要手動修改
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
-                .map(PageMapper::map2Template)
+                .map(PageMapper::titleDivArticle2Template)
                 .map(PageMapper::img2RWD)
                 .map(PageMapper::cmdTable2Div)
                 .forEach(IO::write);

@@ -43,7 +43,7 @@ public class PageMapper {
                 // 排除首頁，因為比較複雜，要手動修改
                 .filter(path -> !path.getFileName().toString().equals("index.html"))
                 .map(IO::pathContent)
-                .map(PageMapper::map2Template)
+                .map(PageMapper::titleDivArticle2Template)
                 .map(PageMapper::img2RWD)
                 .map(PageMapper::cmdTable2Div)
                 .forEach(IO::write);
@@ -57,16 +57,21 @@ public class PageMapper {
         return matcher.group(1);
     }
     
-    public static PathContent map2Template(PathContent pathContent) {
+    public static PathContent titleDivArticle2Template(PathContent pathContent) {
         String content = tagContent(pathContent.content, "div class=\"article\"");
-        
-         pathContent.content = 
-             template.content
-                   .replace("#content#", Matcher.quoteReplacement(content))
-                   .replaceAll("#title#", tagContent(pathContent.content, "title"))
-                   .replaceAll("#fileName#", pathContent.path.getFileName().toString())
-                   .replaceAll("#description#", patterns.get("all").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
+        pathContent.content = fromTemplate(
+                    pathContent.path.getFileName().toString(), 
+                    tagContent(pathContent.content, "title"), 
+                    content);
          return pathContent;
+    }
+    
+    public static String fromTemplate(String fileName, String title, String content) {
+         return template.content
+                   .replace("#content#", Matcher.quoteReplacement(content))
+                   .replaceAll("#title#", title)
+                   .replaceAll("#fileName#", fileName)
+                   .replaceAll("#description#", patterns.get("all").matcher(content).replaceAll("").trim().substring(0, 100) + "...");
     }
     
     public static PathContent img2RWD(PathContent pathContent) {
