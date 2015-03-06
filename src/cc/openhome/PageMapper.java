@@ -19,7 +19,7 @@ public class PageMapper {
     public static Map<String, Pattern> patterns = new HashMap<>();
     static {
         patterns.put("title", Pattern.compile("<title>(.+?)</title>", Pattern.DOTALL));
-        patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?)</div>"));
+        patterns.put("div class=\"article\"", Pattern.compile("<div class=\"article\">((.*\\s*)*?).*</div>"));
         patterns.put("all", Pattern.compile("\\<[^>]*>"));
         patterns.put("img", Pattern.compile("<img (.+?)>", Pattern.DOTALL));
         patterns.put("table", Pattern.compile("<table class=\"cmd\">.+?<tr>.+?<td>(.+?)</td>.+?</tr>.+?</table>", Pattern.DOTALL));
