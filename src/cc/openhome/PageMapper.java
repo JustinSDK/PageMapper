@@ -27,7 +27,7 @@ public class PageMapper {
         patterns.put("div class=\"aside\"", Pattern.compile("<div class=\"aside\">((.*\\s*)*?)</div>"));
         patterns.put("前情", Pattern.compile("<a href.*?>.*?前情</a>"));
         patterns.put("後續", Pattern.compile("<a href.*?>後續.*?</a>"));
-        patterns.put("tdStudyGossip", Pattern.compile("<td style=\"vertical-align: top; width: 690px; text-align: left;\">(.*?)</td>", Pattern.DOTALL));
+        patterns.put("tdStudyGossip", Pattern.compile("<td style=\"vertical-align: top; width: \\d*px; text-align: left;\">(.*?)</td>", Pattern.DOTALL));
         patterns.put("tdAlgorithmGossip", Pattern.compile("<td style=\"width: \\d*px; vertical-align: top;\">(.*?)</td>", Pattern.DOTALL));
     }    
     
