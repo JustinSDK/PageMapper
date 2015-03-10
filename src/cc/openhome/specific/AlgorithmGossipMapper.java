@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package cc.openhome.specific;
 
-package cc.openhome;
-
+import cc.openhome.IO;
+import cc.openhome.PageMapper;
 import static cc.openhome.IO.htmlFiles;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
@@ -15,9 +16,9 @@ import java.util.List;
  *
  * @author Justin
  */
-public class HibernateGossipMapper {
-        public static void main(String[] args) {
-        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\HibernateGossip\\"));
+public class AlgorithmGossipMapper {
+    public static void main(String[] args) {
+        List<String> htmlFiles = htmlFiles(Paths.get("c:\\workspace\\AlgorithmGossip\\"));
         htmlFiles.stream()
                 .map(Paths::get)
                 // 排除首頁，因為比較複雜，要手動修改
@@ -25,7 +26,7 @@ public class HibernateGossipMapper {
                 .map(path -> IO.pathContent(path, Charset.forName("Big5")))
                 .map(pathContent -> PageMapper.titleTdArticle2Template(pathContent, "tdAlgorithmGossip"))
                 .map(PageMapper::img2RWD)
-                .map(pathContent -> PageMapper.pre2PrettyPrint(pathContent, "java"))
+                .map(PageMapper::pre2PrettyPrint)
                 .forEach(IO::write);
     }
 }
