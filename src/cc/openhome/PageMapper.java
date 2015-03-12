@@ -122,4 +122,14 @@ public class PageMapper {
         pathContent.content = patterns.get(name).matcher(pathContent.content).replaceAll(replacement);
         return pathContent;
     }
+    
+    public static PathContent clean(PathContent pathContent) {
+        pathContent.content = pathContent.content
+                 .replaceAll("<small.*?>", "")
+                 .replaceAll("</small>", "")
+                 .replaceAll("<big>", "")
+                 .replaceAll("</big>", "")
+                .replaceAll(" style=\"width: \\d*px; height: \\d*px;\"", "");
+        return pathContent;
+    }
 }
