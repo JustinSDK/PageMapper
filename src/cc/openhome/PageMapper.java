@@ -129,7 +129,9 @@ public class PageMapper {
                  .replaceAll("</small>", "")
                  .replaceAll("<big>", "")
                  .replaceAll("</big>", "")
-                .replaceAll(" style=\"width: \\d*px; height: \\d*px;\"", "");
+                 .replaceAll(" style=\"width: \\d*px; height: \\d*px;\"", "")
+                 .replaceAll(" class=\"postbody\"", "")
+                 .replaceAll("<span></span>", "");
         return pathContent;
     }
 }
